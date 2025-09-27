@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confess Interaktif</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0f172a;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: white;
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+            text-align: center;
+        }
+
+        .active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 1;
+        }
+
+        h1, p {
+            margin: 15px;
+            text-align: center;
+        }
+
+        /* Foto layar pertama */
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid #38bdf8;
+            box-shadow: 0 0 15px rgba(56,189,248,0.7);
+        }
+
+        /* Keypad Style */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 70px);
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: #38bdf8;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #0ea5e9;
+            transform: scale(1.05);
+        }
+
+        .option-btn {
+            background: #f472b6;
+            margin: 10px;
+            padding: 10px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            border: none;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .option-btn:hover {
+            background: #ec4899;
+            transform: scale(1.05);
+        }
+        
+        /* MODIFIKASI: Container agar tombol berdampingan */
+        .intro-buttons {
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            width: 100%; 
+            height: 100px; 
+            position: relative;
+        }
+
+        /* Gaya Khusus untuk tombol yang bergerak */
+        #noButton {
+            background: #ef4444; 
+            transition: all 0.1s ease; 
+        }
+        #noButton:hover {
+            background: #dc2626;
+        }
+
+        /* Gambar di layar baru */
+        .intro-pic {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+
+        .meme {
+            width: 220px;
+            margin-top: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        /* Gaya Khusus untuk video di Layar ke-6 (SUDAH DIPERBESAR) */
+        .final-video {
+            width: 90%; 
+            max-width: 800px; /* NILAI DIPERBARUI */
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            margin-top: 15px;
+        }
+
+
+        /* LOVE ANIMATION */
+        .love {
+            position: absolute;
+            bottom: -40px;
+            font-size: 24px;
+            animation: riseLove 5s linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes riseLove {
+            0% {
+                transform: translateY(0) scale(0.8) rotate(0deg);
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(-110vh) scale(1.3) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="screen active" id="screen1">
+        <img src="fotomu.jpg" alt="Foto Kamu" class="profile-pic">
+        <h1>Masukin PIN dulu 😏</h1>
+        <p id="pinDisplay">______</p>
+        <div class="keypad">
+            <button class="btn" onclick="enterDigit('1')">1</button>
+            <button class="btn" onclick="enterDigit('2')">2</button>
+            <button class="btn" onclick="enterDigit('3')">3</button>
+            <button class="btn" onclick="enterDigit('4')">4</button>
+            <button class="btn" onclick="enterDigit('5')">5</button>
+            <button class="btn" onclick="enterDigit('6')">6</button>
+            <button class="btn" onclick="enterDigit('7')">7</button>
+            <button class="btn" onclick="enterDigit('8')">8</button>
+            <button class="btn" onclick="enterDigit('9')">9</button>
+            <button class="btn" onclick="enterDigit('0')">0</button>
+            <button class="btn" onclick="deleteDigit()">Del</button>
+            <button class="btn" onclick="checkPin()">OK</button>
+        </div>
+        <p id="pinMessage"></p>
+    </div>
+    
+    <div class="screen" id="screen2_intro">
+        <h1>Kok bisa tau passwordnya hmmm... 👀</h1>
+        <img src="https://i.postimg.cc/ZnQ5fztZ/Stiker-Whatsapp.jpg" alt="Gambar Ilustrasi" class="intro-pic">
+        <p>Hacker ya kak??? 🤭</p>
+        <div class="intro-buttons">
+            <button class="option-btn" onclick="goToQuestion()">Lanjut ▶️</button>
+            
+            <button class="option-btn" id="noButton" onmouseover="moveButton()">Gamau Lanjut 💨</button>
+        </div>
+    </div>
+
+
+    <div class="screen" id="screen3_question">
+        <h1>Kamu lagi sibuk ga?? 🤔</h1>
+        <button class="option-btn" onclick="goToMeme()">Sibuk Buanget</button>
+        <button class="option-btn" onclick="goToSokSibuk()">Gaa juga...</button> 
+    </div>
+
+    <div class="screen" id="screen4_meme">
+        <h1>Yaah... 😿</h1>
+        <img src="https://i.postimg.cc/3wbGsVHc/3f918523c106a18ad33337bb9f5c33e2.jpg" alt="Meme Kucing Sedih" class="meme">
+        <p>Yaudaa semangat yeahhh..., tapi aku tetep mau bilang sesuatuu...</p>
+        <button class="option-btn" onclick="goToConfess()">Lanjut ➡️</button>
+    </div>
+
+    <div class="screen" id="screen4_sok_sibuk">
+        <h1>Hmmmm... Curiga nih! 🤨</h1>
+        <img src="https://i.postimg.cc/cL15HB7c/fda93587b75796aee88fe72d25bcfe92.jpg" alt="Meme Curiga" class="meme">
+        <p>Tapi gapapa deh, aku cuma mau bilang sesuatu aja kok... 😇</p>
+        <button class="option-btn" onclick="goToConfess()">Lanjut ➡️</button>
+    </div>
+
+    <div class="screen" id="screen5_confess">
+        <h1>Aku mau bilang sesuatuu 💖</h1>
+        <p>Aku suka sama kamu! Kamu itu orang yang paling baik, lucu, dan selalu bikin aku semangat. 🥺</p>
+        <p>...lanjut isi pengakuanmu disini hehe 😳👉👈</p>
+
+        <button class="option-btn" onclick="goToVideo()">Ada Bonus Rahasia Lagi! ✨</button>
+
+        <audio id="bgMusic">
+            <source src="lagunya.mp3" type="audio/mpeg">
+            Browser kamu tidak mendukung audio tag.
+        </audio>
+    </div>
+
+    <div class="screen" id="screen6_video">
+        <h1>Bonus Spesial buat Kamu! 🎁</h1>
+        <p>Aku punya video lucu/manis khusus buat kamu. Tonton di bawah ini, yaa!</p>
+        
+        <video autoplay loop class="final-video"> 
+            <source src="anuhehe.mp4" type="video/mp4">
+            Browser kamu tidak mendukung pemutaran video.
+        </video>
+        
+        <p style="margin-top: 30px;">Semoga kamu suka! Terima kasih sudah mampir hehe 🥰</p>
+        <button class="option-btn" onclick="goToStart()">Mulai Lagi ↺</button>
+    </div>
+
+
+    <script>
+        let enteredPin = "";
+        const correctPin = "060704";
+
+        function enterDigit(digit) {
+            if (enteredPin.length < 6) {
+                enteredPin += digit;
+                document.getElementById("pinDisplay").textContent =
+                    enteredPin.padEnd(6, "_");
+            }
+        }
+
+        function deleteDigit() {
+            enteredPin = enteredPin.slice(0, -1);
+            document.getElementById("pinDisplay").textContent =
+                enteredPin.padEnd(6, "_");
+        }
+
+        function checkPin() {
+            if (enteredPin === correctPin) {
+                // PIN benar: Mainkan musik dan pindah ke layar intro baru (screen2_intro)
+                const music = document.getElementById("bgMusic");
+                if (music) {
+                    music.play().catch(err => console.log("Autoplay dicegah:", err)); 
+                }
+                showScreen("screen2_intro"); // Pindah ke layar intro
+            } else {
+                document.getElementById("pinMessage").textContent =
+                    "PIN salah 😝 coba lagi!";
+            }
+        }
+
+        function showScreen(screenId) {
+            const current = document.querySelector(".screen.active");
+            if (current) {
+                current.classList.remove("active");
+            }
+            const next = document.getElementById(screenId);
+            next.classList.add("active");
+
+            // Efek love setiap layar muncul
+            spawnLoves();
+        }
+        
+        // Fungsi untuk memindahkan tombol "Gamau Lanjut"
+        function moveButton() {
+            const button = document.getElementById('noButton');
+            
+            const maxMove = 200;
+            const minMove = 100;
+            
+            const randomX = Math.floor(Math.random() * (maxMove - minMove + 1) + minMove) * (Math.random() < 0.5 ? 1 : -1);
+            const randomY = Math.floor(Math.random() * (maxMove - minMove + 1) + minMove) * (Math.random() < 0.5 ? 1 : -1);
+            
+            button.style.transform = `translate(${randomX}px, ${randomY}px)`;
+        }
+
+
+        // Fungsi navigasi
+        function goToQuestion() {
+            showScreen("screen3_question"); 
+        }
+        
+        function goToMeme() {
+            showScreen("screen4_meme"); 
+        }
+
+        function goToSokSibuk() {
+            showScreen("screen4_sok_sibuk"); 
+        }
+
+        function goToConfess() {
+            showScreen("screen5_confess"); 
+        }
+
+        // FUNGSI PINDAH KE LAYAR VIDEO (Musik tetap menyala)
+        function goToVideo() {
+            // TIDAK ADA music.pause() di sini. Musik latar akan terus berputar.
+            
+            // 1. Tampilkan layar video
+            showScreen("screen6_video"); 
+            
+            // 2. Panggil fungsi play video secara manual
+            setTimeout(playFinalVideo, 100); 
+        }
+
+        // FUNGSI BARU UNTUK MEMUTAR VIDEO SECARA MANUAL
+        function playFinalVideo() {
+            const videoElement = document.querySelector("#screen6_video .final-video");
+            if (videoElement) {
+                // Coba putar video
+                videoElement.play().catch(error => {
+                    console.log("Autoplay video dicegah. Interaksi pengguna diperlukan:", error);
+                });
+            }
+        }
+        
+        // FUNGSI KEMBALI KE AWAL
+        function goToStart() {
+            showScreen("screen1");
+            // Reset PIN
+            enteredPin = "";
+            document.getElementById("pinDisplay").textContent = "______";
+            document.getElementById("pinMessage").textContent = "";
+        }
+
+        // Generator Love
+        function spawnLoves() {
+            const hearts = ["❤️","💙","💚","💜","💛","🧡","🤍","💖"];
+            for (let i = 0; i < 12; i++) {
+                const love = document.createElement("div");
+                love.classList.add("love");
+                love.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                love.style.left = Math.random() * 100 + "vw";
+                love.style.fontSize = (20 + Math.random() * 30) + "px";
+                love.style.animationDuration = (3 + Math.random() * 3) + "s";
+                document.body.appendChild(love);
+
+                setTimeout(() => {
+                    love.remove();
+                }, 6000);
+            }
+        }
+    </script>
+</body>
+</html>
